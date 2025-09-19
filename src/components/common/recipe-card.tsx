@@ -35,20 +35,22 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
   return (
     <Card className="w-full min-w-[254px] max-w-md h-[480px] flex flex-col">
       <div className="h-48 overflow-hidden">
-        {recipe.imageUrl ? (
-          <div className="relative h-48 group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md transition-all hover:shadow-lg">
-            <Image
-              src={recipe.imageUrl}
-              alt="Image for recipe"
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
-        ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-500">Нет изображения</span>
-          </div>
-        )}
+        <Link href={`/recipes/${encodeURIComponent(recipe.name)}/${recipe.id}`}>
+          {recipe.imageUrl ? (
+            <div className="relative h-48 group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md transition-all hover:shadow-lg">
+              <Image
+                src={recipe.imageUrl}
+                alt="Image for recipe"
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-500">Нет изображения</span>
+            </div>
+          )}
+        </Link>
       </div>
 
       <CardHeader className="flex justify-between items-center text-black">

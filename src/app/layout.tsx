@@ -9,6 +9,7 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth/auth";
 import AppLoader from "@/hoc/app-loader";
 import Title from "@/components/UI/layout/title";
+import BackButton from "@/components/UI/BackButton/BackButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,9 @@ export default async function RootLayout({
         <Providers>
           <SessionProvider session={session}>
             <AppLoader>
-              <div className="flex min-h-screen flex-col justify-between">
+              <div className="relative flex min-h-screen flex-col justify-between">
+                {/* relative */}
+                <BackButton />
                 <div className="flex flex-col">
                   <Header />
                   <main
@@ -49,7 +52,6 @@ export default async function RootLayout({
                     {children}
                   </main>
                 </div>
-
                 <footer
                   className={`w-full flex items-center justify-center py-3`}
                   style={{ height: layoutConfig.footerHeight }}

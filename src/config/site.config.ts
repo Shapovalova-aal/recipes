@@ -1,6 +1,6 @@
 export const siteConfig ={
     title: "Рецепты",
-    description: "Рецепты татарской кухни",
+    description: "Кухня всего мира",
     navItems : [
     { href: "/", label: "Рецепты" },
     { href: "/ingredients", label: "Ингредиенты" },

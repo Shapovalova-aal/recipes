@@ -5,6 +5,7 @@ export interface IRecipeIngredient{
     ingredientId: string;
     quantity: number;
     ingredient: IIngredient;
+    unit:string;
 }
 
 export interface IRecipe{

@@ -6,6 +6,7 @@ import { IRecipe } from "@/types/recipe";
 import { useIngredientStore } from "@/store/ingredient.store";
 import { useRecipeStore } from "@/store/recipe.store";
 import { useRouter } from "next/navigation";
+import { UNIT_ABBREVIATIONS } from "@/constants/select-options";
 
 // форма используется для создания рецепта и для обновления рецепта
 interface RecipeFormProps {
@@ -16,6 +17,7 @@ interface IIngredientField {
   id: number;
   ingredientId: string;
   quantity: number | null;
+  unit: string;
 }
 
 const initialState = {
@@ -42,8 +44,9 @@ const RecipeForm = ({ initialRecipe }: RecipeFormProps) => {
           id: index,
           ingredientId: ing.ingredientId,
           quantity: ing.quantity,
+          unit: ing.ingredient.unit,
         }))
-      : [{ id: 0, ingredientId: "", quantity: null }]
+      : [{ id: 0, ingredientId: "", quantity: null, unit: "" }]
   );
 
   const { ingredients } = useIngredientStore();
@@ -52,11 +55,23 @@ const RecipeForm = ({ initialRecipe }: RecipeFormProps) => {
 
   const router = useRouter();
 
+  const getUnitLabel = (unit: string) => {
+    const unitOption = UNIT_ABBREVIATIONS.find(
+      (option) => option.value === unit
+    );
+    return unitOption ? unitOption.label : unit.toLowerCase();
+  };
+
   const handleAddIngredientField = () => {
     if (ingredientFields.length < 10) {
       setIngredientFields([
         ...ingredientFields,
-        { id: ingredientFields.length, ingredientId: "", quantity: null },
+        {
+          id: ingredientFields.length,
+          ingredientId: "",
+          quantity: null,
+          unit: "",
+        },
       ]);
     }
   };
@@ -73,7 +88,25 @@ const RecipeForm = ({ initialRecipe }: RecipeFormProps) => {
     value: string | number | null
   ) => {
     setIngredientFields(
-      ingredientFields.map((f) => (f.id === id ? { ...f, [field]: value } : f))
+      //   ingredientFields.map((f) => (f.id === id ? { ...f, [field]: value } : f))
+      // );
+      (prev) =>
+        prev.map((f) => {
+          if (f.id === id) {
+            if (field === "ingredientId" && typeof value === "string") {
+              const selectedIngredient = ingredients.find(
+                (ing) => ing.id === value
+              );
+              return {
+                ...f,
+                ingredientId: value,
+                unit: selectedIngredient?.unit || "",
+              };
+            }
+            return { ...f, [field]: value };
+          }
+          return f;
+        })
     );
   };
 
@@ -86,7 +119,9 @@ const RecipeForm = ({ initialRecipe }: RecipeFormProps) => {
         : await addRecipe(formData);
 
       if (result.success) {
-        setIngredientFields([{ id: 0, ingredientId: "", quantity: null }]);
+        setIngredientFields([
+          { id: 0, ingredientId: "", quantity: null, unit: "" },
+        ]);
         router.push("/");
         setFormData(initialState);
       } else {
@@ -180,7 +215,14 @@ const RecipeForm = ({ initialRecipe }: RecipeFormProps) => {
                 innerWrapper: "bg-default-100 f-wull",
                 input: "text-sm focus:outline-none",
               }}
-              className="w-[100px]"
+              endContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small">
+                    {getUnitLabel(field.unit)}
+                  </span>
+                </div>
+              }
+              className="w-[150px]"
               onChange={(e) =>
                 handleIngredientChange(
                   field.id,
