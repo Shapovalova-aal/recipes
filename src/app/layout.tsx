@@ -46,7 +46,7 @@ export default async function RootLayout({
                 <div className="flex flex-col">
                   <Header />
                   <main
-                    className={`flex flex-col max-w-[1024px] mx-auto px-[24px] justify-start items-center`}
+                    className={`flex flex-col max-w-[1024px] min-w-[1024px] mx-auto px-[24px] justify-start items-center`}
                   >
                     <Title />
                     {children}

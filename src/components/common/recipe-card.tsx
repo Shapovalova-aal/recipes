@@ -4,16 +4,19 @@ import { IRecipe } from "@/types/recipe";
 import { Card, CardBody, CardHeader, Button } from "@heroui/react";
 import { useRecipeStore } from "@/store/recipe.store";
 import Link from "next/link";
-import { useTransition } from "react";
+import React, { useTransition } from "react";
 import Image from "next/image";
 import { UNIT_ABBREVIATIONS } from "@/constants/select-options";
+import { useAuthStore } from "@/store/auth.store";
 
 interface RecipeCardProps {
   recipe: IRecipe;
+  searchQuery: string;
 }
 
-const RecipeCard = ({ recipe }: RecipeCardProps) => {
+const RecipeCard = ({ searchQuery, recipe }: RecipeCardProps) => {
   const { removeRecipe } = useRecipeStore();
+  const { isAuth } = useAuthStore();
   const [isPending, startTransition] = useTransition();
   const handleDelete = () => {
     startTransition(async () => {
@@ -30,6 +33,23 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
       (option) => option.value === unit
     );
     return unitOption ? unitOption.label : unit.toLowerCase();
+  };
+
+  const getSearchHighlighter = (searchQuery: string, sourceText: string) => {
+    if (!searchQuery) return sourceText;
+    const regex = new RegExp(`(${searchQuery})`, "gi");
+
+    const partsString = sourceText.split(regex);
+
+    return partsString.map((part, index) =>
+      regex.test(part) ? (
+        <strong className="bg-secondary-200" key={index}>
+          {part}
+        </strong>
+      ) : (
+        <React.Fragment key={index}>{part}</React.Fragment>
+      )
+    );
   };
 
   return (
@@ -54,15 +74,18 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
       </div>
 
       <CardHeader className="flex justify-between items-center text-black">
-        <h2 className="text-xl font-bold">{recipe.name}</h2>
+        <h2 className="text-xl font-bold">
+          {getSearchHighlighter(searchQuery, recipe.name)}
+        </h2>
       </CardHeader>
 
       <CardBody className="flex-1 text-black">
-        <p className="text-gray-600 line-clamp-6">
-          {recipe.description || "Без описания"}
+        <p className="text-gray-600 line-clamp-6 flex-[1_1_45%]">
+          {getSearchHighlighter(searchQuery, recipe.description) ||
+            "Без описания"}
         </p>
-        <h3 className="mt-4 font-semibold">Ингредиенты:</h3>
-        <ul className="list-disc pl-5 overflow-y-auto max-h-24">
+        <h3 className="mt-4 font-semibold flex-[1_1_10%]">Ингредиенты:</h3>
+        <ul className="list-disc pl-5 overflow-y-auto max-h-24 flex-[1_1_45%]">
           {recipe.ingredients.map((ing) => (
             <li key={ing.id}>
               {ing.ingredient.name}: {ing.quantity}{" "}
@@ -72,21 +95,23 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
         </ul>
       </CardBody>
 
-      <div className="flex justify-end gap-2 p-4">
-        <Link href={`/recipes/${recipe.id}`}>
-          <Button color="primary" variant="light">
-            Редактировать
+      {isAuth && (
+        <div className="flex justify-end gap-2 p-4">
+          <Link href={`/recipes/${recipe.id}`}>
+            <Button color="primary" variant="light">
+              Редактировать
+            </Button>
+          </Link>
+          <Button
+            color="danger"
+            variant="light"
+            onPress={handleDelete}
+            isLoading={isPending}
+          >
+            Удалить
           </Button>
-        </Link>
-        <Button
-          color="danger"
-          variant="light"
-          onPress={handleDelete}
-          isLoading={isPending}
-        >
-          Удалить
-        </Button>
-      </div>
+        </div>
+      )}
     </Card>
   );
 };
