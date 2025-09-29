@@ -17,6 +17,7 @@ model User {
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
+    Recipe    Recipe[]
 
     @@map("users")
 }
@@ -82,6 +83,9 @@ model Recipe {
     // содержит ссылку на картинку. сделать возможность добавления файлов и работы с файловой системой
     // чтобы была возможность добавить картинку (загрузить), удалить картинку 
     ingredients RecipeIngredient[] // связывает рецепт с промежуточной табл. рецептИнгредиент  
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@map("recipes")
 }

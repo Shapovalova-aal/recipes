@@ -1,9 +1,11 @@
 'use server';
 
+import { auth } from '@/auth/auth';
 import {prisma} from '@/utils/prisma';
 
 export async function getRecipes() {
     try {
+        
         const recipes = await prisma.recipe.findMany({
             include:{
                 ingredients:{
@@ -22,6 +24,9 @@ export async function getRecipes() {
 
 export async function createRecipe(formData: FormData){
     try {
+        const session = await auth();
+        if(!session?.user?.id) return{ success:false, error:'Неавторизован'}
+
         // серверное действие. забирает данные из формы и они не в json формате, а в формате FormData
         const name = formData.get('name') as string;
         const description = formData.get('description') as string;
@@ -47,6 +52,7 @@ export async function createRecipe(formData: FormData){
                 name,
                 description,
                 imageUrl,
+                userId: session.user.id,
                 ingredients: {
                     create: ingredients.map (({ingredientId, quantity})=> ({
                         ingredient:{connect: {id: ingredientId}},
@@ -71,10 +77,20 @@ export async function createRecipe(formData: FormData){
 
 export async function updateRecipe(id: string, formData:FormData){
     try {
+        const session = await auth();
+        if(!session?.user?.id) return{ success: false, error: 'Неавторизован'}
+
+        const existing = await prisma.recipe.findUnique({where: {id} })
+        if(!existing){
+            return {success: false, error: 'Рецепт не найден'}
+        }
+        if(existing.userId !== session?.user?.id) return {success:false, error:'Нет прав на редактирование этого рецепта'}
+
         const name = formData.get('name') as string;
         const description = formData.get('description') as string;
         const imageUrl = formData.get('imageUrl') as string;
-         const ingredients = Array.from(formData.entries())
+
+        const ingredients = Array.from(formData.entries())
         .filter(([key]) => key.startsWith('ingredient_'))
         .map(([key, value])=>({
             ingredientId: value as string,
@@ -82,6 +98,7 @@ export async function updateRecipe(id: string, formData:FormData){
                 formData.get(`quantity_${key.split('_')[1]}`)as string
             )
         }));
+
         if (!name || ingredients.length === 0){
             return {
                 success: false,
@@ -120,6 +137,15 @@ export async function updateRecipe(id: string, formData:FormData){
 
 export async function deleteRecipe(id: string) {
     try {
+        const session = await auth();
+        if(!session?.user?.id) return{ success: false, error: 'Неавторизован'}
+        
+        const existing = await prisma.recipe.findUnique({where: {id} })
+        if(!existing){
+            return {success: false, error: 'Рецепт не найден'}
+        }
+        if(existing.userId !== session?.user?.id) return {success:false, error:'Нет прав на удаление этого рецепта'}
+
         await prisma.recipeIngredient.deleteMany({
             where: { recipeId: id }
         });

@@ -16,7 +16,7 @@ interface RecipeCardProps {
 
 const RecipeCard = ({ searchQuery, recipe }: RecipeCardProps) => {
   const { removeRecipe } = useRecipeStore();
-  const { isAuth } = useAuthStore();
+  const { isAuth, session } = useAuthStore();
   const [isPending, startTransition] = useTransition();
   const handleDelete = () => {
     startTransition(async () => {
@@ -73,10 +73,15 @@ const RecipeCard = ({ searchQuery, recipe }: RecipeCardProps) => {
         </Link>
       </div>
 
-      <CardHeader className="flex justify-between items-center text-black">
-        <h2 className="text-xl font-bold">
+      <CardHeader className="flex justify-between items-start text-black">
+        <h2 className="text-xl font-bold flex-[60%]">
           {getSearchHighlighter(searchQuery, recipe.name)}
         </h2>
+        {isAuth && session?.user?.id === recipe.userId && (
+          <span className="rounded-lg text-primary-foreground bg-secondary flex-[40%] text-center p-1">
+            Мой рецепт
+          </span>
+        )}
       </CardHeader>
 
       <CardBody className="flex-1 text-black">
@@ -95,7 +100,7 @@ const RecipeCard = ({ searchQuery, recipe }: RecipeCardProps) => {
         </ul>
       </CardBody>
 
-      {isAuth && (
+      {isAuth && session?.user?.id === recipe.userId && (
         <div className="flex justify-end gap-2 p-4">
           <Link href={`/recipes/${recipe.id}`}>
             <Button color="primary" variant="light">

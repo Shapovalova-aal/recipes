@@ -43,7 +43,7 @@ export const useRecipeStore = create<IRecipeState>((set) => ({
         
         try {
             const result = await createRecipe(formData);
-            if (result.success) {
+            if (result.success && result.recipe) {
                 set((state) => ({
                     recipes: [...state.recipes, result.recipe!],
                     isLoading: false
@@ -64,7 +64,7 @@ export const useRecipeStore = create<IRecipeState>((set) => ({
 
         try {
             const result = await updateRecipe(id, formData);
-            if (result.success) {
+            if (result.success && result.recipe) {
                 set((state)=> ({
                     recipes: state.recipes.map((recipe)=>
                     recipe.id === id ? result.recipe! : recipe
