@@ -84,7 +84,10 @@ const IngredientForm = () => {
 
   return (
     <>
-      <Form className="w-full" action={handlerSubmit}>
+      <Form
+        className="w-full max-w-sm md:max-w-[100%] mx-auto px-4"
+        action={handlerSubmit}
+      >
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <Input
           isRequired

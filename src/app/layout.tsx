@@ -41,13 +41,13 @@ export default async function RootLayout({
           <SessionProvider session={session}>
             <AppLoader>
               <div className="relative flex min-h-screen flex-col justify-between">
-                {/* relative */}
                 <BackButton />
                 <div className="flex flex-col">
                   <Header />
                   <main
-                    className={`flex flex-col max-w-[1024px] min-w-[1024px] mx-auto px-[24px] justify-start items-center`}
+                    className={`flex flex-col w-full overflow-x-hidden max-w-[1024px] mx-auto px-[24px] justify-start items-center`}
                   >
+                    {/* min-w-[1024px] */}
                     <Title />
                     {children}
                   </main>

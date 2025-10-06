@@ -6,6 +6,9 @@ import {
   NavbarContent,
   NavbarItem,
   Button,
+  NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem,
 } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -40,6 +43,7 @@ export default function Header() {
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const getNavItems = () => {
     return siteConfig.navItems
       .filter((item) => {
@@ -60,6 +64,8 @@ export default function Header() {
                 border
                 border-transparent
                 rounded-md
+                text-xl
+                lg:text-medium
                 hover:text-blue-300 hover:border
                 hover:border-blue-300 hover:rounded-md
                 transition-colors
@@ -82,29 +88,19 @@ export default function Header() {
 
     setAuthState("unauthenticated", null);
   };
-  return (
-    <Navbar
-      //   className={`h-[${layoutConfig.headerHeight}]`}
-      style={{ height: layoutConfig.headerHeight }}
-    >
-      <NavbarBrand>
-        <Link href="/" className="flex gap-1">
-          <Logo />
-          <p className="font-bold text-inherit">{siteConfig.title}</p>
-        </Link>
-      </NavbarBrand>
-
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        {getNavItems()}
-      </NavbarContent>
-
-      <NavbarContent justify="end">
-        {isAuth && <p>Привет, {session?.user?.email}!</p>}
+  const AuthButtons = () => {
+    return (
+      <div className="flex items-center justify-between">
+        {isAuth && (
+          <span className="mr-2 whitespace-nowrap">
+            Привет, {session?.user?.email}!
+          </span>
+        )}
         {status === "loading" ? (
           <p>Загрузка...</p>
         ) : !isAuth ? (
-          <>
-            <NavbarItem className="hidden lg:flex">
+          <div className="flex items-center justify-start ">
+            <NavbarItem className="m-2">
               <Button
                 as={Link}
                 color="secondary"
@@ -126,9 +122,9 @@ export default function Header() {
                 Регистрация
               </Button>
             </NavbarItem>
-          </>
+          </div>
         ) : (
-          <NavbarItem className="hidden lg:flex">
+          <NavbarItem>
             <Button
               as={Link}
               color="secondary"
@@ -140,7 +136,42 @@ export default function Header() {
             </Button>
           </NavbarItem>
         )}
+      </div>
+    );
+  };
+
+  return (
+    <Navbar
+      //   className={`h-[${layoutConfig.headerHeight}]`}
+      style={{ height: layoutConfig.headerHeight }}
+      onMenuOpenChange={setIsMenuOpen}
+      isMenuOpen={isMenuOpen}
+    >
+      <NavbarBrand>
+        <Link href="/" className="flex gap-1">
+          <Logo />
+          <p className="font-bold text-inherit">{siteConfig.title}</p>
+        </Link>
+      </NavbarBrand>
+
+      <NavbarContent className="hidden lg:flex gap-4" justify="center">
+        {getNavItems()}
       </NavbarContent>
+
+      <NavbarContent className="hidden md:flex" justify="end">
+        {AuthButtons()}
+      </NavbarContent>
+      <NavbarContent className="lg:hidden" justify="end">
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="lg:hidden"
+        />
+      </NavbarContent>
+      <NavbarMenu>
+        <div className="md:hidden px-3">{AuthButtons()}</div>
+        <div className="w-full h-[1px] m-2 bg-secondary-500" />
+        {getNavItems()}
+      </NavbarMenu>
 
       <RegistrationModal
         isOpen={isRegistrationOpen}

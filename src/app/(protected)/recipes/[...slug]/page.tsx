@@ -36,7 +36,8 @@ const RecipeViewPage = () => {
 
   if (recipe) {
     return (
-      <div className="container min-w-150 mx-auto p-4">
+      <div className="container mx-auto p-4">
+        {/* min-w-150 */}
         <div className="h-90 overflow-hidden mb-4">
           {recipe.imageUrl ? (
             <div className="relative h-90 group overflow-hidden rounded-lg bg-white shadow-md transition-all hover:shadow-lg">

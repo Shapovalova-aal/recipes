@@ -3,7 +3,7 @@ import IngredientForm from "@/forms/ingredient.form";
 
 const IngredientsPage = () => {
   return (
-    <div>
+    <div className="w-full">
       <IngredientForm />
       <IngredientsTable />
     </div>

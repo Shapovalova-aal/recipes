@@ -14,7 +14,7 @@ interface IProps {
 
 const CustomModal = ({ isOpen, onClose, title, children, size }: IProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={size}>
+    <Modal isOpen={isOpen} onClose={onClose} size={size} placement="center">
       <ModalContent>
         <ModalHeader className="border-b">
           <h3 className="text-x1 text-background font-semibold">{title}</h3>
