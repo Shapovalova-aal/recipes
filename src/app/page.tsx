@@ -20,9 +20,7 @@ export default function Home() {
         r.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery, recipes]);
-  //   console.log("searchedRecipes", searchedRecipes);
-  //   console.log("recipes", recipes);
-  //   console.log("auth", session?.user?.id);
+
   return (
     <>
       <div className="flex flex-col w-full justify-between items-center mb-4">

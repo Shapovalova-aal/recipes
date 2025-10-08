@@ -11,9 +11,11 @@ export async function middleware(request: NextRequest) {
     // валидирует (происходит проверка подписи, проверка срока действия токена)
      console.log('Token in middleware:', token );
 
-    const protectedRoutes = ['/ingredients', '/recipes/new', '/recipes/:path*']
+    const protectedRoutes = ['/ingredients', '/recipes/new', '/recipes/:path*','/profile/:path*']
     
-    if (protectedRoutes.some((route)=> pathname.startsWith(route.replace(':path','')))) {
+    // if (protectedRoutes.some((route)=> pathname.startsWith(route.replace(':path','')))) {
+    if (protectedRoutes.some((route) => pathname.startsWith(route.replace(/[:*].*$/, '')))) {
+
         
         // начинается ли наш pathname с одного из путей в массиве защищенных путей. 
         // Если наш путь начинается с защищенного пути, а это значит,
@@ -30,5 +32,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/ingredients', '/recipes/new', '/recipes/:path*'] // matcher указывает к каким маршрутам приминяется middleware
+    matcher: ['/ingredients', '/recipes/new', '/recipes/:path*', '/profile/:path*'] // matcher указывает к каким маршрутам приминяется middleware
 }

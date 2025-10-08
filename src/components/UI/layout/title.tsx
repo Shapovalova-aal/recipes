@@ -4,15 +4,34 @@ import { useParams, usePathname } from "next/navigation";
 
 const Title = () => {
   const pathName = usePathname();
+  const params = useParams();
+
   const currentNavItem = siteConfig.navItems.find(
     (item) => item.href === pathName
   );
-  const { slug } = useParams<{ slug: string[] }>();
-  let pageTitle = currentNavItem ? currentNavItem.label : siteConfig.title;
-  if (slug) {
-    const [name] = slug;
-    pageTitle = decodeURIComponent(name);
+
+  let pageTitle = siteConfig.title;
+
+  if (pathName.startsWith("/profile")) {
+    pageTitle = "Мой профиль";
+  } else if (pathName.startsWith("/recipes")) {
+    const slug = (params.slug as string) || undefined;
+
+    if (slug && slug.length > 0) {
+      pageTitle = decodeURIComponent(slug[0]);
+    } else if (!slug && params.id) {
+      pageTitle = "Редактировать рецепт";
+    } else if (pathName.startsWith("/recipes/new")) {
+      pageTitle = "Создать рецепт";
+    } else {
+      pageTitle = "Рецепты";
+    }
+  } else {
+    if (currentNavItem) {
+      pageTitle = currentNavItem.label;
+    }
   }
+  console.log("title", pageTitle);
 
   return (
     <div className="w-full flex justify-center my-6">
