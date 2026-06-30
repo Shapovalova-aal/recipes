@@ -3,12 +3,13 @@
 import { IRecipe } from "@/types/recipe";
 import { Card, CardBody, CardHeader, Button } from "@heroui/react";
 import { useRecipeStore } from "@/store/recipe.store";
+import { useFavoriteStore } from "@/store/favorite.store";
 import Link from "next/link";
 import React, { useTransition } from "react";
 import Image from "next/image";
 import { UNIT_ABBREVIATIONS } from "@/constants/select-options";
 import { useAuthStore } from "@/store/auth.store";
-
+import { Heart } from "lucide-react";
 interface RecipeCardProps {
   recipe: IRecipe;
   searchQuery: string;
@@ -17,7 +18,11 @@ interface RecipeCardProps {
 const RecipeCard = ({ searchQuery, recipe }: RecipeCardProps) => {
   const { removeRecipe } = useRecipeStore();
   const { isAuth, session } = useAuthStore();
+  const { isFavorite, toggleFavorite } = useFavoriteStore();
   const [isPending, startTransition] = useTransition();
+  const [isFavoritePending, startFavoriteTransition] = useTransition();
+
+  const favorite = isFavorite(recipe.id);
   const handleDelete = () => {
     startTransition(async () => {
       try {
@@ -28,9 +33,19 @@ const RecipeCard = ({ searchQuery, recipe }: RecipeCardProps) => {
     });
   };
 
+  const handleToggleFavorite = () => {
+    startFavoriteTransition(async () => {
+      try {
+        await toggleFavorite(recipe);
+      } catch (error) {
+        console.error("Ошибка при изменении избранного", error);
+      }
+    });
+  };
+
   const getUnitLabel = (unit: string) => {
     const unitOption = UNIT_ABBREVIATIONS.find(
-      (option) => option.value === unit
+      (option) => option.value === unit,
     );
     return unitOption ? unitOption.label : unit.toLowerCase();
   };
@@ -48,7 +63,7 @@ const RecipeCard = ({ searchQuery, recipe }: RecipeCardProps) => {
         </strong>
       ) : (
         <React.Fragment key={index}>{part}</React.Fragment>
-      )
+      ),
     );
   };
 
@@ -71,6 +86,22 @@ const RecipeCard = ({ searchQuery, recipe }: RecipeCardProps) => {
             </div>
           )}
         </Link>
+        {isAuth && (
+          <Button
+            isIconOnly
+            size="sm"
+            radius="full"
+            className="absolute top-2 right-2 z-10 bg-white/80 backdrop-blur"
+            onPress={handleToggleFavorite}
+            isLoading={isFavoritePending}
+          >
+            <Heart
+              size={18}
+              fill={favorite ? "#ef4444" : "none"}
+              color={favorite ? "#ef4444" : "#000"}
+            />
+          </Button>
+        )}
       </div>
 
       <CardHeader className="flex justify-between items-start text-black">

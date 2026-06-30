@@ -15,9 +15,10 @@ model User {
     accounts Account[]
     sessions Session[]
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+    createdAt DateTime   @default(now()) @map("created_at")
+    updatedAt DateTime   @updatedAt @map("updated_at")
     Recipe    Recipe[]
+    favorites Favorite[]
 
     @@map("users")
 }
@@ -84,8 +85,9 @@ model Recipe {
     // чтобы была возможность добавить картинку (загрузить), удалить картинку 
     ingredients RecipeIngredient[] // связывает рецепт с промежуточной табл. рецептИнгредиент  
 
-    userId String
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String
+    user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    favorites Favorite[]
 
     @@map("recipes")
 }
@@ -99,6 +101,20 @@ model RecipeIngredient {
     quantity     Float
 
     @@map("recipe_ingredient")
+}
+
+model Favorite {
+    id       String @id @default(uuid())
+    userId   String @map("user_id")
+    recipeId String @map("recipe_id")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@unique([userId, recipeId])
+    @@map("favorites")
 }
 
 enum Category {

@@ -2,17 +2,24 @@
 
 import { useAuthStore } from "@/store/auth.store";
 import { useRecipeStore } from "@/store/recipe.store";
+import { IRecipe } from "@/types/recipe";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IRecipe } from "@/types/recipe";
 // import { useRouter } from "next/navigation";
 import RecipeCard from "@/components/common/recipe-card";
-import { Tabs, Tab, Card, CardBody } from "@heroui/react";
+import { useFavoriteStore } from "@/store/favorite.store";
+import { Card, CardBody, Tab, Tabs } from "@heroui/react";
 
 const ProfilePage = () => {
   const { id } = useParams<{ id: string }>();
   const { session } = useAuthStore();
   const { recipes, isLoading, error } = useRecipeStore();
+  const {
+    favorites,
+    isLoading: favoritesLoading,
+    error: favoritesError,
+    loadFavorites,
+  } = useFavoriteStore();
   const [recipe, setRecipe] = useState<IRecipe[] | null>([]);
   //   const [searchQuery, setSearchQuery] = useState("");
 
@@ -22,6 +29,10 @@ const ProfilePage = () => {
       setRecipe(foundRecipe || null);
     }
   }, [recipes, id, error]);
+
+  useEffect(() => {
+    loadFavorites();
+  }, [loadFavorites]);
 
   if (isLoading) return <p className="text-center">Загрузка...</p>;
   if (error) return <p className="text-red-500 text-center">{error}</p>;
@@ -55,9 +66,17 @@ const ProfilePage = () => {
           <Tab key="favorites" title="Избранное">
             <Card className="bg-[--background])">
               <CardBody>
+                {favoritesLoading && <p className="text-center">Загрузка...</p>}
+                {favoritesError && (
+                  <p className="text-red-500 text-center">{favoritesError}</p>
+                )}
+                {!favoritesLoading && favorites.length === 0 && (
+                  <p className="text-center">Пока нет избранных рецептов</p>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Optio, accusantium!
+                  {favorites.map((r) => (
+                    <RecipeCard key={r.id} recipe={r} searchQuery={""} />
+                  ))}
                 </div>
               </CardBody>
             </Card>

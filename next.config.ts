@@ -8,8 +8,14 @@ const nextConfig: NextConfig = {
   images:{
     remotePatterns:[
         {
+        protocol: 'https',
+        hostname: 'eda.rambler.ru',
+        pathname: '/**',
+        },
+        {
             protocol: 'https',
-            hostname: 'eda.ru'
+            hostname: 'eda.ru',
+            pathname: '/**',
         }
     ]
   }
