@@ -1,37 +1,250 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Recipes Portal
 
-## Getting Started
+Современное full-stack веб-приложение для поиска, хранения и управления рецептами русской кухни.
 
-First, run the development server:
+Проект разработан с использованием **Next.js 15**, **React 19** и **TypeScript**. Основной целью было изучение современных инструментов разработки, построение масштабируемой архитектуры и реализация полноценного CRUD-приложения с авторизацией, системой избранного и управлением связанными сущностями.
+
+---
+
+# Демонстрация
+
+<p align="center">
+  <img src="./docs/demo.gif" alt="Recipes Portal Demo" width="900"/>
+</p>
+
+---
+
+# Скриншоты
+
+| Главная              |
+| -------------------- |
+| ![](./docs/home.png) |
+
+| Личный кабинет/ Мои рецепты | Личный кабинет/ Избранное |
+| --------------------------- | ------------------------- |
+| ![](./docs/profile.png)     | ![](./docs/favorites.png) |
+
+| Управление ингредиентами    |
+| --------------------------- |
+| ![](./docs/ingredients.png) |
+
+---
+
+# Возможности
+
+## Аутентификация
+
+- Регистрация пользователей
+- Авторизация через NextAuth
+- JWT-аутентификация
+- Защищенные маршруты
+- Личный кабинет пользователя
+
+---
+
+## Управление рецептами
+
+- Просмотр каталога рецептов
+- Поиск рецептов
+- Просмотр подробной информации
+- Создание новых рецептов
+- Редактирование собственных рецептов
+- Удаление рецептов
+
+---
+
+## Управление ингредиентами
+
+Для авторизованных пользователей доступен отдельный раздел **«Ингредиенты»**.
+
+Функциональность:
+
+- просмотр списка ингредиентов;
+- добавление новых ингредиентов;
+- удаление существующих ингредиентов.
+
+Все ингредиенты хранятся в отдельной таблице базы данных и используются повторно при создании и редактировании рецептов.
+
+Такой подход позволяет избежать дублирования данных и обеспечивает единый справочник ингредиентов для всех пользователей.
+
+---
+
+## Избранное
+
+- Добавление рецептов в избранное
+- Удаление рецептов из избранного
+- Просмотр списка избранных рецептов
+
+---
+
+## Профиль пользователя
+
+- Просмотр информации о пользователе
+- Просмотр собственных рецептов
+- Управление созданными рецептами
+
+---
+
+# Особенности реализации
+
+В проекте реализовано разделение данных на независимые сущности.
+
+Основные сущности:
+
+- User
+- Recipe
+- Ingredient
+- Favorite
+
+Ингредиенты представлены как самостоятельная сущность:
+
+- хранятся в отдельной таблице базы данных;
+- доступны для управления через отдельный интерфейс;
+- используются повторно при создании рецептов;
+- позволяют поддерживать целостность данных.
+
+---
+
+# Технологический стек
+
+## Frontend
+
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- HeroUI
+- Framer Motion
+- Zustand
+
+## Backend
+
+- Next.js API Routes
+- Prisma ORM
+- PostgreSQL
+- NextAuth
+
+## Работа с формами
+
+- React Hook Form
+- Zod
+
+---
+
+# Структура проекта
+
+```
+src
+│
+├── app
+│   ├── (protected)
+│   ├── (public)
+│   ├── api
+│   ├── layout.tsx
+│   ├── error
+│   └── not-found.tsx
+│
+├── auth
+├── components
+├── config
+├── constants
+├── forms
+├── hoc
+├── providers
+├── schema
+├── store
+├── types
+└── utils
+```
+
+---
+
+# Основной функционал
+
+| Возможность       | Описание                                                   |
+| ----------------- | ---------------------------------------------------------- |
+| Авторизация       | Регистрация и вход через NextAuth                          |
+| CRUD рецептов     | Создание, просмотр, редактирование и удаление рецептов     |
+| CRUD ингредиентов | Управление общим справочником ингредиентов                 |
+| Избранное         | Добавление и удаление рецептов из избранного               |
+| Профиль           | Просмотр данных пользователя и управление своими рецептами |
+| Поиск             | Поиск рецептов по названию                                 |
+
+---
+
+# Локальный запуск
+
+Клонировать репозиторий:
+
+```bash
+git clone https://github.com/Shapovalova-aal/recipes.git
+```
+
+Перейти в папку проекта:
+
+```bash
+cd recipes
+```
+
+Установить зависимости:
+
+```bash
+npm install
+```
+
+Создать файл `.env` и заполнить необходимые переменные окружения.
+
+Запустить проект:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Приложение будет доступно по адресу:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# Что было реализовано
 
-To learn more about Next.js, take a look at the following resources:
+- Авторизация через NextAuth
+- JWT-аутентификация
+- CRUD рецептов
+- CRUD ингредиентов
+- Система избранного
+- Поиск рецептов
+- Защищенные маршруты
+- Работа с PostgreSQL через Prisma
+- Валидация данных с помощью Zod
+- Глобальное состояние через Zustand
+- Адаптивная верстка
+- Современный интерфейс на HeroUI
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Архитектурные решения
 
-## Deploy on Vercel
+При разработке проекта особое внимание было уделено масштабируемости и переиспользуемости кода.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Основные принципы:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# recipes
+- разделение приложения на публичную и защищенную части;
+- переиспользуемые UI-компоненты;
+- выделение бизнес-логики в отдельные сервисы и хуки;
+- использование Zustand для управления глобальным состоянием;
+- типизация всех сущностей с помощью TypeScript;
+- серверная работа с базой данных через Prisma ORM;
+- валидация пользовательских данных с помощью React Hook Form и Zod.
+
+---
+
+# Автор
+
+**Александра Шаповалова**
+
+Frontend Developer
+
+GitHub: https://github.com/Shapovalova-aal
